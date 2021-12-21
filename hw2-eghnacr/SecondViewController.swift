@@ -10,18 +10,26 @@ import UIKit
 class SecondViewController: UIViewController {
 
     @IBOutlet weak var tfName: UITextField!
+    weak var backgroundDelegate: BackgroundDelegate!
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
 
     @IBAction func btnSubmitAction(_ sender: Any) {
-        let name = tfName.text ?? ""
-        NotificationCenter.default.post(name: .nameSubmitted, object: nil, userInfo: ["name": name])
+        postNotificationNameSubmitted()
+        backgroundDelegate.doBackground { view in
+            view.backgroundColor = .random
+        }
         navigationController?.popViewController(animated: true)
     }
 
+    private func postNotificationNameSubmitted() {
+        guard let name = tfName.text else { return }
+        NotificationCenter.default.post(name: .nameSubmitted, object: nil, userInfo: ["name": name])
+    }
+    
 }
 
-extension Notification.Name {
-    static let nameSubmitted = Notification.Name(rawValue: "nameSubmitted")
-}
+
+

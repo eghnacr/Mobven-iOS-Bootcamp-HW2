@@ -8,22 +8,34 @@
 import UIKit
 
 class ViewController: UIViewController {
+
     @IBOutlet weak var lblName: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(self.nameSubmitted(_:)), name: .nameSubmitted, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.handleNotificationNameSubmitted(_:)), name: .nameSubmitted, object: nil)
     }
 
-    @objc func nameSubmitted(_ notification: Notification) {
-        guard let name = notification.userInfo?["name"] as? String else { return
-        }
+    @objc func handleNotificationNameSubmitted(_ notification: Notification) {
+        guard let name = notification.userInfo?["name"] as? String else { return }
         lblName.text = name
     }
 
-    @IBAction func btnShowAction(_ sender: Any) {
+    @IBAction func btnChangeColorAction(_ sender: Any) {
+        performSegue(withIdentifier: "toSecond", sender: nil)
     }
 
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let secondVC = segue.destination as! SecondViewController
+        secondVC.backgroundDelegate = self
+    }
+
+}
+
+extension ViewController: BackgroundDelegate {
+    func doBackground(_ handler: (UIView) -> Void) {
+        handler(self.view)
+    }
 }
 
